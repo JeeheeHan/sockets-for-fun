@@ -3,7 +3,8 @@
 import socket
 import select 
 import sys
-import thread
+from threading import *
+from _thread import *
 
 #AF_INTET refers to the address ipv4. SOCK_STREAM is using the connection-oriented TCP protocol( Transmission Control Protocol)
 #since the connection between client and server is needed before the data is sent
@@ -11,7 +12,7 @@ import thread
 #then encapsulated into Internet Protocol datagram and given to the peers
 
 try:
-    server = socket.socket(socket.AF_INET), socket.SOCK_STREAM)
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
     print ("Socket successfully created!")
 except socket.error as err:
@@ -35,7 +36,7 @@ active_clients =[]
 
 #Connecting and sending welcome message
 def clientthread(conn, addr):
-    conn.send("Welcome to this chatroom")
+    conn.send(bytes("Welcome to this chatroom", "utf-8"))
 
     #Prints the message and address of the user to the server terminal 
     while True:
@@ -78,7 +79,7 @@ while True:
     #print the address of the user that just connected
     print(addr[0] + "connected")
     #Start the new thread for all that connects
-    thread.start_new_thread(clientthread),(conn,addr))
+    start_new_thread(clientthread,(conn,addr))
 
 conn.close()
 server.close()
